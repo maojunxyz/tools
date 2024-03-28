@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字母匹配游戏</title>
+    <!-- 引入 Tailwind CSS 样式表 -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* 自定义样式 */
+        #game-container {
+            display: grid;
+            grid-template-columns: repeat(6, 80px); /* 6x6 格式，可根据需要调整尺寸 */
+            gap: 10px;
+        }
+        .card {
+            width: 80px; /* 根据网格尺寸调整 */
+            height: 80px; /* 根据网格尺寸调整 */
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .card.highlighted {
+            background-color: #ccc; /* 修改高亮颜色为灰色 */
+        }
+        #timer {
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-200 flex flex-col items-center h-screen">
+    <h1 class="text-3xl font-semibold mt-4">字母匹配游戏</h1>
+	<div id="tips" class="text-lg font-bold mt-4">找出相同字母进行匹配。</div>
+    <div id="timer" class="text-lg font-bold mt-4">计时: 0 秒</div>
+    <div id="game-container" class="mt-4"></div>
+
+    <script>
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const cards = [];
+        let letterIndex = 0; // 用于追踪字母的索引
+
+        for (let i = 0; i < 6 * 6 / 2; i++) {
+            const letter = letters[letterIndex];
+            cards.push(letter);
+            cards.push(letter);
+            letterIndex++;
+
+            // 如果字母用完了，重新从头开始
+            if (letterIndex === letters.length) {
+                letterIndex = 0;
+            }
+        }
+        
+        let selectedCard = null; // 存储当前已选择的卡片
+        let matchedPairs = 0;
+        let timer = 0; // 计时器变量
+        let timerInterval; // 用于清除计时器的变量
+        let isMatching = false; // 标志，用于检查是否正在进行匹配动画
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (!isMatching) {
+                    timer++;
+                    document.getElementById("timer").textContent = `计时: ${timer} 秒`;
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function createCard(value) {
+            const card = document.createElement("div");
+            card.className = "card bg-white rounded-lg flex justify-center items-center cursor-pointer";
+            card.style.fontSize = "18px";
+            card.style.color = "#000";
+            card.style.border = "2px solid #000";
+            card.textContent = value;
+            card.addEventListener("click", () => {
+                if (!card.classList.contains("matched") && card !== selectedCard && !isMatching) {
+                    card.classList.add("highlighted");
+                    
+                    if (!selectedCard) {
+                        // 如果没有选择的卡片，则将当前卡片存储为已选择的卡片
+                        selectedCard = card;
+                    } else {
+                        // 如果已经有选择的卡片，进行匹配
+                        if (selectedCard.textContent === card.textContent) {
+                            matchedPairs++;
+
+                            selectedCard.classList.add("matched");
+                            card.classList.add("matched");
+
+                            selectedCard = null; // 重置已选择的卡片
+
+                            if (matchedPairs === cards.length / 2) {
+                                stopTimer(); // 停止计时
+                                const timeInSeconds = timer;
+                                alert(`恭喜！您完成了游戏，用时: ${timeInSeconds} 秒。`);
+                                resetGame();
+                            }
+                        } else {
+                            isMatching = true; // 开始匹配动画
+                            setTimeout(() => {
+                                selectedCard.classList.remove("highlighted");
+                                card.classList.remove("highlighted");
+                                selectedCard = null; // 重置已选择的卡片
+                                isMatching = false; // 结束匹配动画
+                            }, 1000);
+                        }
+                    }
+                }
+            });
+            return card;
+        }
+
+        function resetGame() {
+            selectedCard = null;
+            matchedPairs = 0;
+            timer = 0;
+            document.getElementById("timer").textContent = `计时: ${timer} 秒`;
+
+            const gameContainer = document.getElementById("game-container");
+            gameContainer.innerHTML = "";
+
+            shuffleArray(cards);
+
+            for (const cardValue of cards) {
+                const card = createCard(cardValue);
+                gameContainer.appendChild(card);
+            }
+
+            startTimer(); // 重新开始计时
+        }
+
+        resetGame();
+    </script>
+</body>
+</html>

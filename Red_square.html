@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>点击红色方块</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        #target {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>用最短的时间点击红色方块100次</h1>
+    <div id="target"></div>
+    <p id="score">得分: 0</p>
+    <p id="time">时间: 0秒>
+
+    <script>
+        let score = 0;
+        let timeElapsed = 0;
+        let timerInterval;
+        let gameStartTime;
+
+        function generateRandomPosition() {
+            const target = document.getElementById("target");
+            const maxX = window.innerWidth - target.clientWidth;
+            const maxY = window.innerHeight - target.clientHeight;
+
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+
+            target.style.left = randomX + "px";
+            target.style.top = randomY + "px";
+        }
+
+        function increaseScore() {
+            score++;
+            document.getElementById("score").textContent = `得分: ${score}`;
+
+            if (score === 100) {
+                clearInterval(timerInterval); // 停止计时器
+                const endTime = new Date();
+                const timeDifference = (endTime - gameStartTime) / 1000;
+
+                const modal = document.createElement("div");
+                modal.className = "fixed inset-0 flex items-center justify-center z-50";
+                modal.innerHTML = `
+                    <div class="bg-white rounded-lg p-8 shadow-lg">
+                        <p class="text-lg font-semibold mb-4">恭喜！您成功点击了100次红色方块！</p>
+                        <p class="mb-4">用时：${timeDifference.toFixed(2)}秒</p>
+                        <button id="resetButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
+                            确认
+                        </button>
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+
+                const resetButton = document.getElementById("resetButton");
+                resetButton.addEventListener("click", () => {
+                    score = 0;
+                    timeElapsed = 0;
+                    document.getElementById("score").textContent = `得分: ${score}`;
+                    document.getElementById("time").textContent = `时间: ${timeElapsed}秒`;
+                    generateRandomPosition();
+                    timerInterval = setInterval(updateTime, 1000);
+                    gameStartTime = new Date();
+                    modal.remove();
+                });
+            }
+        }
+
+        function updateTime() {
+            timeElapsed++;
+            document.getElementById("time").textContent = `时间: ${timeElapsed}秒`;
+        }
+
+        const target = document.getElementById("target");
+        target.addEventListener("click", () => {
+            if (score === 0) {
+                gameStartTime = new Date(); // 记录游戏开始时间
+            }
+            increaseScore();
+            generateRandomPosition();
+        });
+
+        generateRandomPosition();
+
+        // 开始计时器
+        timerInterval = setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>

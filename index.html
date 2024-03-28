@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工具站导航</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+  <div id="app" class="container mx-auto py-8">
+    <h1 class="text-3xl font-semibold text-center mb-8">工具站导航</h1>
+    <div class="mb-8">
+      <input type="text" v-model="searchTerm" placeholder="输入关键字搜索" class="w-full p-3 border border-gray-300 rounded-md">
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+      <div v-for="(tool, index) in filteredTools" :key="index" class="group relative overflow-hidden bg-white rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out">
+        <a :href="tool.link">
+          <img :src="tool.image" :alt="tool.name" class="w-full h-32 object-cover group-hover:scale-105 transition duration-300 ease-in-out">
+          <div class="p-1 bg-white bg-opacity-90 absolute bottom-0 left-0 w-full">
+            <p class="font-semibold text-gray-800 truncate flex items-center justify-center" >{{ tool.name }}</p>
+          </div>
+        </a>
+      </div>
+    </div>
+    <p v-if="filteredTools.length === 0" class="text-center mt-8 text-gray-500">未找到匹配的工具</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        searchTerm: '',
+        tools: [
+      { name: "爱心树", image: "assets/image.png", link: "love1.html" },
+      { name: "表白爱心", image: "assets/image.png", link: "love2.html" },
+      { name: "关键字匹配校验工具", image: "assets/image.png", link: "Log_keyword_hit.html" },
+      { name: "日志多色过滤高亮工具", image: "assets/image.png", link: "Log_Multi-Keyword_Filtering_Highlighting_Script_Generator.html" },
+      { name: "字母匹配游戏", image: "assets/image.png", link: "Alphabet_matching.html" },
+      { name: "点击红框游戏", image: "assets/image.png", link: "Red_square.html" },
+      { name: "舒尔特方格游戏", image: "assets/image.png", link: "Schulte_square.html" },
+
+
+      
+          // 添加更多工具
+        ]
+      },
+      computed: {
+        filteredTools() {
+          return this.tools.filter(tool => tool.name.toLowerCase().includes(this.searchTerm.toLowerCase()));
+        }
+      }
+    });
+  </script>
+</body>
+</html>

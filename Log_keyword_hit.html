@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关键字匹配工具</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 py-12 px-4">
+    <div class="max-w-3xl mx-auto bg-white p-8 rounded shadow-lg">
+        <h1 class="text-2xl font-bold mb-4">关键字匹配工具</h1>
+        <form id="keywordForm" class="mb-6">
+            <div class="mb-4">
+                <label for="keywords" class="block text-gray-600">请输入关键字（多个关键字用空格分隔）：</label>
+                <textarea id="keywords" name="keywords" rows="4" required
+                       class="w-full px-4 py-2 rounded shadow appearance-none border text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-y"></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="logData" class="block text-gray-600">请粘贴日志数据：</label>
+                <textarea id="logData" name="logData" rows="6" required
+                          class="w-full px-4 py-2 rounded shadow appearance-none border text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+            </div>
+            <div>
+                <button type="submit"
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow focus:outline-none focus:shadow-outline">
+                    匹配
+                </button>
+            </div>
+        </form>
+
+        <h2 class="text-xl font-semibold mb-2">匹配的关键字：</h2>
+        <ul id="matchedKeywords" class="list-disc pl-6 mb-4"></ul>
+
+        <h2 class="text-xl font-semibold mb-2">未匹配的关键字：</h2>
+        <ul id="unmatchedKeywords" class="list-disc pl-6"></ul>
+    </div>
+
+    <script>
+        document.getElementById('keywordForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            const keywordsInput = document.getElementById('keywords').value;
+            const keywords = keywordsInput.split(/\s+/).filter(Boolean); // 使用正则表达式拆分关键字并过滤掉空白关键字
+            const logData = document.getElementById('logData').value;
+
+            const matchedKeywords = {};
+            const unmatchedKeywords = {};
+
+            for (const keyword of keywords) {
+                const keywordRegExp = new RegExp(keyword, 'g');
+                const matches = logData.match(keywordRegExp);
+
+                if (matches) {
+                    matchedKeywords[keyword] = matches;
+                } else {
+                    unmatchedKeywords[keyword] = [];
+                }
+            }
+
+            // 显示匹配的关键字
+            const matchedKeywordsList = document.getElementById('matchedKeywords');
+            matchedKeywordsList.innerHTML = '';
+            for (const keyword in matchedKeywords) {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<strong>${keyword}:</strong> 匹配次数: ${matchedKeywords[keyword].length}`;
+                matchedKeywordsList.appendChild(listItem);
+            }
+
+            // 显示未匹配的关键字
+            const unmatchedKeywordsList = document.getElementById('unmatchedKeywords');
+            unmatchedKeywordsList.innerHTML = '';
+            for (const keyword in unmatchedKeywords) {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<strong>${keyword}:</strong> 未匹配`;
+                unmatchedKeywordsList.appendChild(listItem);
+            }
+        });
+    </script>
+</body>
+</html>

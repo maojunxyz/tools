@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>舒尔特方格游戏</title>
+    <!-- 引入 Tailwind CSS 样式表 -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* 自定义 CSS 样式 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 80px);
+            grid-gap: 10px;
+            margin: 20px;
+        }
+        .grid-item {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #333;
+            cursor: pointer;
+            background-color: white; /* 初始背景颜色为白色 */
+        }
+    </style>
+</head>
+<body class="bg-gray-200 flex flex-col items-center h-screen">
+    <h1 class="text-3xl font-semibold mt-4">舒尔特方格游戏</h1>
+    <div class="mt-4">
+        <p class="text-lg font-bold" id="timer">时间: 0 秒</p>
+    </div>
+    <div class="grid-container" id="gridContainer"></div>
+    
+    <!-- 提示框 -->
+    <div id="modal" class="hidden fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="bg-white rounded-lg p-4 flex flex-col items-center">
+            <p class="text-xl font-semibold mb-2" id="modalMessage"></p>
+            <button id="resetButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">重新开始</button>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript 代码
+        const gridSize = 5;
+        const gridContainer = document.getElementById("gridContainer");
+        const timerElement = document.getElementById("timer");
+        const modal = document.getElementById("modal");
+        const modalMessage = document.getElementById("modalMessage");
+        const resetButton = document.getElementById("resetButton");
+
+        let currentNumber = 1;
+        let correctNumber = 1; // 用于存储正确的数字
+        let startTime, timerInterval;
+
+        // 生成随机的数字或字符数组
+        function generateRandomArray() {
+            const arr = [];
+            for (let i = 1; i <= gridSize * gridSize; i++) {
+                arr.push(i);
+            }
+            shuffleArray(arr);
+            return arr;
+        }
+
+        // Fisher-Yates 洗牌算法
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+
+        // 创建舒尔特方格
+        function createSchulteGrid() {
+            const numbers = generateRandomArray();
+            gridContainer.innerHTML = "";
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                const cell = document.createElement("div");
+                cell.className = "grid-item";
+                cell.textContent = numbers[i];
+                cell.addEventListener("click", handleGridItemClick);
+                gridContainer.appendChild(cell);
+            }
+            correctNumber = 1; // 重置正确的数字
+        }
+
+        // 处理方格点击事件
+        function handleGridItemClick(event) {
+            const clickedNumber = parseInt(event.target.textContent);
+            if (clickedNumber === currentNumber) {
+                event.target.style.backgroundColor = "#ccc"; // 更改背景颜色为灰色
+                currentNumber++;
+                if (currentNumber === 2) {
+                    startTime = new Date();
+                    timerInterval = setInterval(updateTimer, 1000);
+                }
+                if (currentNumber > gridSize * gridSize) {
+                    clearInterval(timerInterval);
+                    const endTime = new Date();
+                    const timeInSeconds = Math.floor((endTime - startTime) / 1000);
+                    timerElement.textContent = `时间: ${timeInSeconds} 秒`;
+                    currentNumber = 1;
+                    showModal(`恭喜你完成游戏！\n完成时间: ${timeInSeconds} 秒`);
+                }
+            } else {
+                showIncorrectModal(correctNumber);
+            }
+            correctNumber++; // 更新正确的数字
+        }
+
+        // 显示错误提示框
+        function showIncorrectModal(correctNumber) {
+            modalMessage.textContent = `错误！应该点击 ${correctNumber}!`;
+            modal.classList.remove("hidden");
+        }
+
+        // 显示提示框
+        function showModal(message) {
+            modalMessage.textContent = message;
+            modal.classList.remove("hidden");
+        }
+
+        // 隐藏提示框并重置游戏
+        resetButton.addEventListener("click", () => {
+            modal.classList.add("hidden");
+            currentNumber = 1;
+            createSchulteGrid();
+            timerElement.textContent = "时间: 0 秒";
+        });
+
+        // 更新计时器
+        function updateTimer() {
+            const currentTime = new Date();
+            const timeInSeconds = Math.floor((currentTime - startTime) / 1000);
+            timerElement.textContent = `时间: ${timeInSeconds} 秒`;
+        }
+
+        // 启动游戏
+        createSchulteGrid();
+    </script>
+</body>
+</html>
