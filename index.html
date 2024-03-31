@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>工具站导航</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="./assets/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
   <div id="app" class="container mx-auto py-8">
@@ -25,7 +25,7 @@
     <p v-if="filteredTools.length === 0" class="text-center mt-8 text-gray-500">未找到匹配的工具</p>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+  <script src="./assets/vue.min.js"></script>
   <script>
     new Vue({
       el: '#app',
@@ -39,10 +39,17 @@
       { name: "字母匹配游戏", image: "assets/image.png", link: "Alphabet_matching.html" },
       { name: "点击红框游戏", image: "assets/image.png", link: "Red_square.html" },
       { name: "舒尔特方格游戏", image: "assets/image.png", link: "Schulte_square.html" },
-
+      { name: "Ctool开发工具箱", image: "https://ctool.dev/icon/icon_512.png", link: "https://ctool.dev/tool.html#/tool/hash?category=encryption" },
+      { name: "Wifi连接卡", image: "https://wificard.io/images/wifi.ico", link: "https://wificard.io/" },
+      { name: "离线二维码生成", image: "assets/image.png", link: "qrCode.html" },
+      { name: "根据地址获取街道名称", image: "assets/image.png", link: "https://scorpionfree98.github.io/fetch_address_detail/Geocoder.html" },
+      { name: "在线图片压缩", image: "https://tinypng.com/images/apple-touch-icon.png", link: "https://tinypng.com/" },
+      { name: "Nginx在线配置工具", image: "https://www.digitalocean.com/_next/static/media/android-chrome-192x192.f09059d8.png", link: "https://www.digitalocean.com/community/tools/nginx" },
+      { name: "算法可视化", image: "https://algorithm-visualizer.org/favicon.png", link: "https://algorithm-visualizer.org/" },
+      { name: "Yaml转化Properties", image: "assets/image.png", link: "https://upendra-thunuguntla.github.io/mule-yaml-tools/index.html" },
 
       
-          // 添加更多工具
+      
         ]
       },
       computed: {
